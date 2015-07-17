@@ -42,23 +42,18 @@ def loads(text, **kwargs):
     :raises: commentjson.JSONLibraryException
     :returns: dict or list.
     '''
-    regex = r'\s*(#|\/{2}).*$'
-    regex_inline = r'(:?(?:\s)*([A-Za-z\d\.{}]*)|((?<=\").*\")[}\]]?,?)(?:\s)*(((#|(\/{2})).*)|)$'
-    lines = text.split('\n')
-    excluded = []
-
-    for index, line in enumerate(lines):
-        if re.search(regex, line):
-            if re.search(r'^' + regex, line, re.IGNORECASE):
-                excluded.append(lines[index])
-            elif re.search(regex_inline, line):
-                lines[index] = re.sub(regex_inline, r'\1', line)
-
-    for line in excluded:
-        lines.remove(line)
+    # this assumes that JSON does not support multiline text
+    new_lines = []
+    for line in text.split("\n"):
+        for match in re.finditer("(#|\/{2})", line):
+            pos = match.start()
+            if not line[:pos].count("\"") % 2:
+                line = line[:pos]
+                break
+        new_lines.append(line)
 
     try:
-        return json.loads('\n'.join(lines), **kwargs)
+        return json.loads('\n'.join(new_lines), **kwargs)
     except Exception, e:
         raise JSONLibraryException(e.message)
 
