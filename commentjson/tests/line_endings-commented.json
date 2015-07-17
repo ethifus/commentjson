@@ -1,0 +1,8 @@
+{
+    "key1": ["value1"], // Real comment
+    "key2": {"key2.1": "value2"}, // Real comment
+    "key3": {"key3.1": "value2"} // Real comment
+    ,
+    "key4": {
+      "key4.1": "value"} // Real comment
+}
